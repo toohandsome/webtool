@@ -19,8 +19,8 @@ import "ace-builds/src-noconflict/ext-searchbox";
 import StatusBar from "ace-builds/src-noconflict/ext-statusbar";
 import "ace-builds/src-noconflict/ext-static_highlight";
 import "ace-builds/src-noconflict/ext-settings_menu";
- 
-import { CaretRight,CaretBottom } from '@element-plus/icons-vue';
+
+import { CaretRight, CaretBottom } from '@element-plus/icons-vue';
 
 export default defineComponent({
   name: "AceWithMenu",
@@ -38,6 +38,111 @@ export default defineComponent({
     contextmenu: directive
   },
   setup() {
+    const menuData = ref([
+      {
+        "name": "筛选/过滤",
+        "event": "",
+        "sub": [
+          { "name": "包含特定文本的行", "event": "" },
+          { "name": "不包含特定文本的行", "event": "" }
+        ]
+      },
+      {
+        "name": "前后缀",
+        "event": "",
+        "sub": [
+          { "name": "添加前缀", "event": "" },
+          { "name": "添加后缀", "event": "" },
+          { "name": "添加前后缀", "event": "" }
+        ]
+      },
+      {
+        "name": "大小写格式",
+        "event": "",
+        "sub": [
+          { "name": "修改为大写 (UPPERCASE)", "event": "" },
+          { "name": "修改为小写 (lowercase)", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "修改为驼峰 (camelCase)", "event": "" },
+          { "name": "修改为大驼峰 (PascalCase)", "event": "" },
+          { "name": "修改为蛇形 (snake_case)", "event": "" },
+          { "name": "修改为破折号 (dash-case)", "event": "" },
+          { "name": "修改为常量格式 (CONSTANT_CASE)", "event": "" },
+          { "name": "修改为点分割格式 (dot.case)", "event": "" },
+          { "name": "修改为标题格式 (Title Case)", "event": "" },
+          { "name": "修改为句子格式 (Sentence Case)", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "交换大小写 (sWAP cASE)", "event": "" }
+        ]
+      },
+      {
+        "name": "合并/分割",
+        "event": "",
+        "sub": [
+          { "name": "每两行合并为一行", "event": "" },
+          { "name": "每两行合并为一行并且用空格隔开", "event": "" },
+          { "name": "每两行合并为一行并且用逗号隔开", "event": "" },
+          { "name": "每两行合并为一行并且用分号隔开", "event": "" },
+          { "name": "每两行合并为一行并且用自定义符号隔开", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "每N行合并为一行", "event": "" },
+          { "name": "每N行合并为一行并且用空格隔开", "event": "" },
+          { "name": "每N行合并为一行并且用逗号隔开", "event": "" },
+          { "name": "每N行合并为一行并且用分号隔开", "event": "" },
+          { "name": "每N行合并为一行并且用自定义符号隔开", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "用空格分割行", "event": "" },
+          { "name": "用逗号分割行", "event": "" },
+          { "name": "用分号分割行", "event": "" },
+          { "name": "用自定义符号分割行", "event": "" },
+        ]
+      },
+      {
+        "name": "排序",
+        "event": "",
+        "sub": [
+          { "name": "升序 (大小写敏感)", "event": "" },
+          { "name": "降序 (大小写敏感)", "event": "" },
+          { "name": "升序 (大小写不敏感)", "event": "" },
+          { "name": "降序 (大小写不敏感)", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "根据长度升序", "event": "" },
+          { "name": "根据长度降序", "event": "" },
+          { "name": "根据单词数量升序", "event": "" },
+          { "name": "根据单词数量降序", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "随机顺序 (打乱顺序)", "event": "" },
+          { "name": "反转顺序 (第一行调整为最后一行)", "event": "" }
+        ]
+      },
+      {
+        "name": "删除",
+        "event": "",
+        "sub": [
+          { "name": "删除重复行 (大小写敏感)", "event": "" },
+          { "name": "删除重复行 (大小写不敏感)", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "删除空白字符 (空格,制表符等)", "event": "" },
+          { "name": "删除换行符 (所有内容合并为一行)", "event": "" },
+          { "name": "删除空白字符和换行符", "event": "" },
+          { "name": "将换行符替换为空格", "event": "" },
+          { "name": "将换行符和空白字符替换为空格", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "删除空行 (这一行什么都没有)", "event": "" },
+          { "name": "删除多余的空行", "event": "" },
+          { "name": "删除空白行 (有空格等空白字符)", "event": "" },
+          { "name": "删除多余的空白行", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "只保留重复行 (大小写敏感)", "event": "" },
+          { "name": "只保留重复行 (大小写不敏感)", "event": "" },
+          { "name": "只保留唯一行 (大小写敏感)", "event": "" },
+          { "name": "只保留唯一行 (大小写不敏感)", "event": "" },
+          { "name": "divider", "event": "" },
+          { "name": "删除控制符", "event": "" }
+        ]
+      }
+
+    ]);
     const dialogTitle = ref("");
     const myAceEditorRef = ref(null);
     const dialogVisible = ref(false);
@@ -53,6 +158,7 @@ export default defineComponent({
     // const searchMode = ref("normal");
     // const searchDirection = ref("down");
     const filterDialogVisible = ref(false);
+    const easyMode = ref(false);
     const editerTxt = ref(`console.log('Hello, Ace Editor!');
 1
 2
@@ -209,13 +315,13 @@ ded4
         });
     };
     if (process.browser) {
-    document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.key === "f") {
-        event.preventDefault();
-        searchDialogVisible.value = true;
-        console.log("111");
-      }
-    });
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "f") {
+          event.preventDefault();
+          searchDialogVisible.value = true;
+          console.log("111");
+        }
+      });
     }
     const renewSearchOption = () => {
       let searchOption = {
@@ -281,6 +387,7 @@ ded4
     });
     onMounted(() => {
       console.log("ace", ace);
+      console.log("menuData", menuData.value);
       aceEditor.value = myAceEditorRef.value._editor;
       console.log("editor1", myAceEditorRef.value._editor);
 
@@ -327,7 +434,9 @@ ded4
       showReplace,
       replaceVisable,
       filterDialogVisible,
-      filterCheckList
+      filterCheckList,
+      easyMode,
+      menuData
     };
   }
 });
@@ -335,71 +444,53 @@ ded4
 
 <template>
   <div>
-    <VAceEditor
-      ref="myAceEditorRef"
-      v-model:value="editerTxt"
-      v-contextmenu:contextmenu
-      useWorker="true"
-      :lang="language"
-      :theme="theme"
-      :options="editorOptions"
-      style="width: 100%; height: 500px"
-    />
+
+    <el-menu ellipsis mode="horizontal" style="height: 40px;">
+      <el-sub-menu v-for="(item, i) in menuData" :index="i" :key="i">
+        <template #title>{{ item.name }}</template>
+
+        <div v-for="(item1, index1) in item.sub">
+          <el-menu-item :index="i + '-' + index1" v-if="item1.name != 'divider'">
+            {{ item1.name }}
+          </el-menu-item>
+          <v-contextmenu-divider v-if="item1.name == 'divider'" />
+        </div>
+      </el-sub-menu>
+    </el-menu>
+
+
+  </div>
+  <div>
+    <VAceEditor ref="myAceEditorRef" v-model:value="editerTxt" v-contextmenu:contextmenu useWorker="true"
+      :lang="language" :theme="theme" :options="editorOptions" style="width: 100%; height: 500px" />
     <div id="statusBar" style="width: 100%; height: 100px" />
   </div>
 
   <div>
-    <el-dialog
-      v-model="searchDialogVisible"
-      :modal="searchDialogModal"
-      :close-on-click-modal="false"
-      modal-class="my-dialog-class"
-      width="700"
-      draggable
-      overflow
-      :style="{ opacity: searchDialogOpacity }"
-      @focusin="searchDialogFocus('open')"
-      @focusout="searchDialogFocus('close')"
-      style="pointer-events: auto;"
-    >
+    <el-dialog v-model="searchDialogVisible" :modal="searchDialogModal" :close-on-click-modal="false"
+      modal-class="my-dialog-class" width="700" draggable overflow :style="{ opacity: searchDialogOpacity }"
+      @focusin="searchDialogFocus('open')" @focusout="searchDialogFocus('close')" style="pointer-events: auto;">
       <div style="display: flex">
         <!-- <Edit style="width: 1em; height: 1em; margin-right: 8px" /> -->
         <!-- <IconifyIconOffline :icon="CaretRight" /> -->
-        <el-icon    style="margin-right: 5px; margin-top: 8px" @click="showReplace" >
-          <CaretBottom v-if="replaceVisable"/>
-          <CaretRight v-if="!replaceVisable"/>
+        <el-icon style="margin-right: 5px; margin-top: 8px" @click="showReplace">
+          <CaretBottom v-if="replaceVisable" />
+          <CaretRight v-if="!replaceVisable" />
         </el-icon>
-        <el-text>查找目标：</el-text
-        ><el-input
-          v-model="searchVal"
-          style="width: 350px"
-          clearable
-          autofocus
-        />
+        <el-text>查找目标：</el-text><el-input v-model="searchVal" style="width: 350px" clearable autofocus />
         <!-- <el-button style="margin-left: 10px" @click="searchCount"
           >计数</el-button
         > -->
-        <el-button style="margin-left: 10px" @click="searchNext('up')"
-          >上一个</el-button
-        >
+        <el-button style="margin-left: 10px" @click="searchNext('up')">上一个</el-button>
         <el-button @click="searchNext('down')">下一个</el-button>
       </div>
-      <div
-        v-show="replaceVisable"
-        style="margin-top: 10px; margin-bottom: 10px; margin-left: 18px"
-      >
-        <el-text>替换内容：</el-text
-        ><el-input v-model="replaceVal" style="width: 350px" clearable />
-        <el-button style="margin-left: 10px" @click="replaceText"
-          >替换</el-button
-        >
+      <div v-show="replaceVisable" style="margin-top: 10px; margin-bottom: 10px; margin-left: 18px">
+        <el-text>替换内容：</el-text><el-input v-model="replaceVal" style="width: 350px" clearable />
+        <el-button style="margin-left: 10px" @click="replaceText">替换</el-button>
         <el-button @click="replaceText('all')">全部替换</el-button>
       </div>
       <div style="margin-top: 10px; margin-bottom: 5px">
-        <el-checkbox-group
-          v-model="searchCheckList"
-          @change="searchOptionChange"
-        >
+        <el-checkbox-group v-model="searchCheckList" @change="searchOptionChange">
           <el-checkbox label="循环查找" value="circle" />
           <el-checkbox label="全词匹配" value="whole" />
           <el-checkbox label="匹配大小写" value="case" />
@@ -430,35 +521,16 @@ ded4
     </el-dialog>
 
     <!-- 右键菜单过滤弹窗-->
-    <el-dialog
-      v-model="filterDialogVisible"
-      :modal="searchDialogModal"
-      :close-on-click-modal="false"
-      modal-class="my-dialog-class"
-      width="500"
-      draggable
-      overflow
-      :style="{ opacity: searchDialogOpacity }"
-      title="筛选/过滤条件"
-      @focusin="searchDialogFocus('open')"
-      @focusout="searchDialogFocus('close')"
-       style="pointer-events: auto;"
-    >
+    <el-dialog v-model="filterDialogVisible" :modal="searchDialogModal" :close-on-click-modal="false"
+      modal-class="my-dialog-class" width="500" draggable overflow :style="{ opacity: searchDialogOpacity }"
+      title="筛选/过滤条件" @focusin="searchDialogFocus('open')" @focusout="searchDialogFocus('close')"
+      style="pointer-events: auto;">
       <div style="display: flex">
-        <el-text>内容 ：</el-text
-        ><el-input
-          v-model="dialogValue1"
-          style="width: 350px"
-          clearable
-          autofocus
-        />
+        <el-text>内容 ：</el-text><el-input v-model="dialogValue1" style="width: 350px" clearable autofocus />
       </div>
 
       <div style="margin-top: 10px; margin-bottom: 5px">
-        <el-checkbox-group
-          v-model="filterCheckList"
-          @change="searchOptionChange"
-        >
+        <el-checkbox-group v-model="filterCheckList" @change="searchOptionChange">
           <el-checkbox label="匹配大小写" value="case" />
           <el-checkbox label="正则" value="reg" />
           <el-checkbox label="选中行" value="selectd" />
@@ -469,9 +541,7 @@ ded4
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="filterDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="filterDialogVisible = false"
-            >预览</el-button
-          >
+          <el-button type="primary" @click="filterDialogVisible = false">预览</el-button>
 
           <el-button type="danger" @click="filterStrFun1"> 确定 </el-button>
         </div>
@@ -479,135 +549,17 @@ ded4
     </el-dialog>
 
     <v-contextmenu ref="contextmenu">
-      <v-contextmenu-submenu title="筛选/过滤">
-        <v-contextmenu-item @click="filterStr"
-          >包含特定文本的行</v-contextmenu-item
-        >
-        <!-- <v-contextmenu-item
-          >筛选包含特定文本的行到一个新的编辑器</v-contextmenu-item
-        > -->
-        <!-- <v-contextmenu-divider /> -->
-        <!-- <v-contextmenu-item>筛选/过滤 正则匹配的行</v-contextmenu-item> -->
-        <!-- <v-contextmenu-item
-          >筛选正则匹配的行到一个新的编辑器</v-contextmenu-item
-        > -->
-        <v-contextmenu-divider />
-        <v-contextmenu-item>在选中行中 包含特定文本的行</v-contextmenu-item>
-        <!-- <v-contextmenu-item
-          >在选中文件中筛选包含特定文本的行到一个新的编辑器</v-contextmenu-item
-        > -->
-        <v-contextmenu-divider />
-        <v-contextmenu-item>不包含特定文本的行</v-contextmenu-item>
-        <!-- <v-contextmenu-item
-          >筛选不包含特定文本的行到一个新的编辑器</v-contextmenu-item
-        > -->
-        <!-- <v-contextmenu-divider />
-        <v-contextmenu-item>筛选/过滤 正则不匹配的行</v-contextmenu-item> -->
-        <!-- <v-contextmenu-item
-          >筛选正则不匹配的行到一个新的编辑器</v-contextmenu-item
-        > -->
-        <v-contextmenu-divider />
-        <v-contextmenu-item>在选中行中不包含特定文本的行</v-contextmenu-item>
-        <!-- <v-contextmenu-item
-          >在选中文件中筛选不包含特定文本的行到一个新的编辑器</v-contextmenu-item
-        > -->
-      </v-contextmenu-submenu>
-      <v-contextmenu-submenu title="前后缀">
-        <v-contextmenu-item>给所有行添加前缀</v-contextmenu-item>
-        <v-contextmenu-item>给所有行添加后缀</v-contextmenu-item
-        ><v-contextmenu-item>给所有行添加相同前后缀</v-contextmenu-item>
-        <v-contextmenu-divider />
-        <v-contextmenu-item>给选中行添加前缀</v-contextmenu-item>
-        <v-contextmenu-item>给选中行添加后缀</v-contextmenu-item
-        ><v-contextmenu-item>给选中行添加相同前后缀</v-contextmenu-item>
-      </v-contextmenu-submenu>
-      <v-contextmenu-submenu title="大小写格式">
-        <v-contextmenu-item>修改为大写 (UPPERCASE)</v-contextmenu-item>
-        <v-contextmenu-item>修改为小写 (lowercase)</v-contextmenu-item>
-        <v-contextmenu-divider />
-        <v-contextmenu-item>修改为驼峰 (camelCase)</v-contextmenu-item>
-        <v-contextmenu-item>修改为大驼峰 (PascalCase)</v-contextmenu-item>
-        <v-contextmenu-item>修改为蛇形 (snake_case)</v-contextmenu-item>
-        <v-contextmenu-item>修改为破折号 (dash-case)</v-contextmenu-item>
-        <v-contextmenu-item>修改为常量格式 (CONSTANT_CASE)</v-contextmenu-item>
-        <v-contextmenu-item>修改为点分割格式 (dot.case)</v-contextmenu-item>
-        <v-contextmenu-item>修改为标题格式 (Title Case)</v-contextmenu-item>
-        <v-contextmenu-item>修改为句子格式 (Sentence Case)</v-contextmenu-item>
-        <v-contextmenu-item>修改为标题格式 (Title Case)</v-contextmenu-item>
-        <v-contextmenu-divider />
-        <v-contextmenu-item>交换大小写 (sWAP cASE)</v-contextmenu-item>
-      </v-contextmenu-submenu>
-      <v-contextmenu-submenu title="合并/分割">
-        <v-contextmenu-item>每两行合并为一行</v-contextmenu-item>
-        <v-contextmenu-item>每两行合并为一行并且用空格隔开</v-contextmenu-item>
-        <v-contextmenu-item>每两行合并为一行并且用逗号隔开</v-contextmenu-item>
-        <v-contextmenu-item>每两行合并为一行并且用分号隔开</v-contextmenu-item>
-        <v-contextmenu-item
-          >每两行合并为一行并且用自定义符号隔开</v-contextmenu-item
-        >
-        <v-contextmenu-divider />
-        <v-contextmenu-item>每N行合并为一行</v-contextmenu-item>
-        <v-contextmenu-item>每N行合并为一行并且用空格隔开</v-contextmenu-item>
-        <v-contextmenu-item>每N行合并为一行并且用逗号隔开</v-contextmenu-item>
-        <v-contextmenu-item>每N行合并为一行并且用分号隔开</v-contextmenu-item>
-        <v-contextmenu-item
-          >每N行合并为一行并且用自定义符号隔开</v-contextmenu-item
-        >
-        <v-contextmenu-divider />
-        <v-contextmenu-item>用空格分割行</v-contextmenu-item>
-        <v-contextmenu-item>用逗号分割行</v-contextmenu-item>
-        <v-contextmenu-item>用分号分割行</v-contextmenu-item>
-        <v-contextmenu-item>用自定义符号分割行</v-contextmenu-item>
-        <v-contextmenu-divider />
-      </v-contextmenu-submenu>
-
-      <v-contextmenu-divider />
-
-      <v-contextmenu-submenu title="排序">
-        <v-contextmenu-item>升序 (大小写敏感)</v-contextmenu-item>
-        <v-contextmenu-item>降序 (大小写敏感)</v-contextmenu-item>
-        <v-contextmenu-item>升序 (大小写不敏感)</v-contextmenu-item>
-        <v-contextmenu-item>降序 (大小写不敏感)</v-contextmenu-item>
-
-        <v-contextmenu-divider />
-        <v-contextmenu-item>根据长度升序</v-contextmenu-item>
-        <v-contextmenu-item>根据长度降序</v-contextmenu-item>
-        <v-contextmenu-item>根据单词数量升序</v-contextmenu-item>
-        <v-contextmenu-item>根据单词数量降序</v-contextmenu-item>
-        <v-contextmenu-divider />
-        <v-contextmenu-item>语义化升序</v-contextmenu-item
-        ><v-contextmenu-item>语义化降序</v-contextmenu-item>
-        <v-contextmenu-divider />
-        <v-contextmenu-item>随机顺序</v-contextmenu-item>
-        <v-contextmenu-item>反转顺序 (第一行调整为最后一行)</v-contextmenu-item>
-      </v-contextmenu-submenu>
-
-      <v-contextmenu-submenu title="删除">
-        <v-contextmenu-item>删除重复行 (大小写敏感)</v-contextmenu-item
-        ><v-contextmenu-item>删除重复行 (大小写不敏感)</v-contextmenu-item>
-        <v-contextmenu-divider />
-
-        <v-contextmenu-item>删除空白字符 (空格,制表符等)</v-contextmenu-item>
-        <v-contextmenu-item>删除换行符 (所有内容合并为一行)</v-contextmenu-item>
-        <v-contextmenu-item>删除空白字符和换行符</v-contextmenu-item>
-        <v-contextmenu-item>将换行符替换为空格</v-contextmenu-item>
-        <v-contextmenu-item>将换行符和空白字符替换为空格</v-contextmenu-item>
-
-        <v-contextmenu-divider />
-        <v-contextmenu-item>删除空行 (这一行什么都没有)</v-contextmenu-item>
-        <v-contextmenu-item>删除多余的空行</v-contextmenu-item>
-        <v-contextmenu-item>删除空白行 (有空格等空白字符)</v-contextmenu-item>
-        <v-contextmenu-item>删除多余的空白行</v-contextmenu-item>
-        <v-contextmenu-divider />
-
-        <v-contextmenu-item>只保留重复行 (大小写敏感)</v-contextmenu-item>
-        <v-contextmenu-item>只保留重复行 (大小写不敏感)</v-contextmenu-item>
-        <v-contextmenu-item>只保留唯一行 (大小写敏感)</v-contextmenu-item>
-        <v-contextmenu-item>只保留唯一行 (大小写不敏感)</v-contextmenu-item>
-        <v-contextmenu-divider />
-        <v-contextmenu-item>删除控制符</v-contextmenu-item>
+      <v-contextmenu-submenu v-for="(item, i) in menuData"  :title="item.name" >
+        <div v-for="(item1, index1) in item.sub">
+          <v-contextmenu-item   v-if="item1.name != 'divider'">
+            {{ item1.name }}
+          </v-contextmenu-item>
+          <v-contextmenu-divider v-if="item1.name == 'divider'" />
+        </div>
       </v-contextmenu-submenu>
     </v-contextmenu>
+
+   
   </div>
 </template>
 

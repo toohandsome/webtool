@@ -2,7 +2,7 @@
 
   <div>
 
-    <el-menu ellipsis mode="horizontal" style="height: 50px;">
+    <el-menu ellipsis mode="horizontal" style="height: 50px;" :show-timeout=10>
       <el-menu-item index="1">文本处理</el-menu-item>
       <el-sub-menu index="1">
 
