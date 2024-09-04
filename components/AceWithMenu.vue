@@ -10,13 +10,13 @@ import {
   ContextmenuSubmenu,
   ContextmenuGroup
 } from "v-contextmenu";
+import "v-contextmenu/dist/themes/default.css";
 
 import { VAceEditor } from "vue3-ace-editor";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import ace from "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-searchbox";
-import StatusBar from "ace-builds/src-noconflict/ext-statusbar";
 import "ace-builds/src-noconflict/ext-static_highlight";
 import "ace-builds/src-noconflict/ext-settings_menu";
 
@@ -203,15 +203,11 @@ ded4
       fontSize: "12px",
       showPrintMargin: false
     });
-    const filterStr = e => {
-      // console.log(e);
-      // showSettingBox(filterStrFun1);
-      filterDialogVisible.value = true;
-    };
+
     const filterStrFun1 = () => {
       filterTextarea(filterStrFun2, dialogValue1.value);
     };
-    const filterStrFun2 = (str1, str2) => {
+    const filterStrFun2 = (str1: string , str2: any) => {
       return str1.indexOf(str2) != -1;
     };
     const filterTextarea = (fun, waitFilterStr) => {
@@ -248,7 +244,7 @@ ded4
 
       console.log(`执行 耗时 ${duration.toFixed(2)} 毫秒`);
     };
-    const searchNext = searchDirection => {
+    const searchNext = (searchDirection: string) => {
       console.log("11", searchVal.value);
       renewSearchOption();
       if (searchDirection == "down") {
@@ -259,7 +255,7 @@ ded4
       // const session = aceEditor.value.getSession();
       // console.log("session", session);
     };
-    const searchDialogFocus = type => {
+    const searchDialogFocus = (type: string) => {
       // console.log("searchDialogFocus");
       if ("open" == type) {
         // console.log("searchDialogFocus open");
@@ -405,8 +401,7 @@ ded4
       dialogTitle,
       dialogVisible,
       dialogValue1,
-      dialogValue2,
-      filterStr,
+      dialogValue2, 
       showSettingBox,
       filterStrFun1,
       filterStrFun2,
@@ -446,7 +441,7 @@ ded4
   <div>
 
     <el-menu ellipsis mode="horizontal" style="height: 40px;">
-      <el-sub-menu v-for="(item, i) in menuData" :index="i" :key="i">
+      <el-sub-menu v-for="(item, i) in menuData" :index='i+""' :key="i">
         <template #title>{{ item.name }}</template>
 
         <div v-for="(item1, index1) in item.sub">
