@@ -9,7 +9,7 @@ useHead({
   script: [
     { src: "/js/react.js" },
     { src: "/js/react-dom.js" },
-    { src: "/js/excalidraw.development.js"  },
+    { src: "/js/excalidraw.js"  },
     { src: "/js/showExcalidraw.js", body: true },
   ],
 });

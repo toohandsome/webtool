@@ -19,6 +19,5 @@ export default defineNuxtConfig({
   css: [
     'element-plus/dist/index.css',
     'element-plus/theme-chalk/display.css',
-  ],
-
+  ] 
 })
