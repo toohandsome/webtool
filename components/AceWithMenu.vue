@@ -21,6 +21,7 @@ import "ace-builds/src-noconflict/ext-static_highlight";
 import "ace-builds/src-noconflict/ext-settings_menu";
 
 import { CaretRight, CaretBottom } from '@element-plus/icons-vue';
+import { fa } from "element-plus/es/locales.mjs";
 
 export default defineComponent({
   name: "AceWithMenu",
@@ -38,13 +39,17 @@ export default defineComponent({
     contextmenu: directive
   },
   setup() {
+    const filterDialogVisible = ref(false);
+    const showFilterDialog = () => {
+      filterDialogVisible.value = true;
+    };
     const menuData = ref([
       {
         "name": "筛选/过滤",
         "event": "",
         "sub": [
-          { "name": "包含特定文本的行", "event": "" },
-          { "name": "不包含特定文本的行", "event": "" }
+          { "name": "包含特定文本的行", "event": showFilterDialog },
+          { "name": "不包含特定文本的行", "event": showFilterDialog }
         ]
       },
       {
@@ -157,7 +162,7 @@ export default defineComponent({
     const filterCheckList = ref(["case"]);
     // const searchMode = ref("normal");
     // const searchDirection = ref("down");
-    const filterDialogVisible = ref(false);
+
     const easyMode = ref(false);
     const editerTxt = ref(`console.log('Hello, Ace Editor!');
 1
@@ -204,14 +209,42 @@ ded4
       showPrintMargin: false
     });
 
+
+
     const filterStrFun1 = () => {
-      filterTextarea(filterStrFun2, dialogValue1.value);
+
+      let reg = new RegExp(dialogValue1.value);
+
+      var allText = "";
+      if (!filterCheckList.value.includes("case")) {
+        reg = new RegExp(dialogValue1.value, "i");
+      }
+
+      if (filterCheckList.value.includes("selectd")) {
+        console.log(aceEditor.value.getSelectionRange());
+      } else {
+        allText = editerTxt.value;
+      }
+
+      if (filterCheckList.value.includes("reg")) {
+        filterTextarea(filterStrFun3, reg, allText);
+      } else {
+        if (filterCheckList.value.includes("case")) {
+          filterTextarea(filterStrFun2, dialogValue1.value, allText);
+        } else {
+          filterTextarea(filterStrFun3, reg, allText);
+        }
+      }
+
     };
-    const filterStrFun2 = (str1: string , str2: any) => {
+    const filterStrFun2 = (str1: string, str2: string) => {
       return str1.indexOf(str2) != -1;
     };
-    const filterTextarea = (fun, waitFilterStr) => {
-      let editerStr = editerTxt.value;
+    const filterStrFun3 = (str1: string, reg: RegExp) => {
+      return reg.test(str1);
+    };
+    const filterTextarea = (fun: Function, condition: any, editerStr: string) => {
+
       const start = performance.now();
       // console.log("editerTxt.value", editerStr);
       var strArr = editerStr.split("\n");
@@ -220,7 +253,7 @@ ded4
       for (let index = 0; index < strArr.length; index++) {
         const element = strArr[index];
         // console.log("element", element);
-        if (fun(element, waitFilterStr)) {
+        if (fun(element, condition)) {
           finalStr += element + "\n";
           findNum++;
         }
@@ -286,30 +319,10 @@ ded4
       //   }
       // });
       // console.log("resultCount: ", matchCount);
-      aceEditor.value.session.highlight(searchVal.value);
-      aceEditor.value.renderer.updateBackMarkers();
+      // aceEditor.value.session.highlight(searchVal.value);
+      // aceEditor.value.renderer.updateBackMarkers();
     };
 
-    const showSettingBox = fun => {
-      ElMessageBox.prompt("请输入", "请输入", {
-        draggable: true,
-        confirmButtonText: "确认",
-        cancelButtonText: "取消"
-        // inputPattern:
-        //   /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        // inputErrorMessage: "Invalid Email"
-      })
-        .then(({ value }) => {
-          dialogValue1.value = value;
-          fun();
-        })
-        .catch(() => {
-          ElMessage({
-            type: "info",
-            message: "取消输入"
-          });
-        });
-    };
     if (process.browser) {
       document.addEventListener("keydown", function (event) {
         if (event.ctrlKey && event.key === "f") {
@@ -401,8 +414,7 @@ ded4
       dialogTitle,
       dialogVisible,
       dialogValue1,
-      dialogValue2, 
-      showSettingBox,
+      dialogValue2,
       filterStrFun1,
       filterStrFun2,
       filterTextarea,
@@ -431,7 +443,8 @@ ded4
       filterDialogVisible,
       filterCheckList,
       easyMode,
-      menuData
+      menuData,
+      showFilterDialog
     };
   }
 });
@@ -441,11 +454,11 @@ ded4
   <div>
 
     <el-menu ellipsis mode="horizontal" style="height: 40px;">
-      <el-sub-menu v-for="(item, i) in menuData" :index='i+""' :key="i">
+      <el-sub-menu v-for="(item, i) in menuData" :index='i + ""' :key="i">
         <template #title>{{ item.name }}</template>
 
         <div v-for="(item1, index1) in item.sub">
-          <el-menu-item :index="i + '-' + index1" v-if="item1.name != 'divider'">
+          <el-menu-item :index="i + '-' + index1" v-if="item1.name != 'divider'" @click="item1.event">
             {{ item1.name }}
           </el-menu-item>
           <v-contextmenu-divider v-if="item1.name == 'divider'" />
@@ -455,10 +468,10 @@ ded4
 
 
   </div>
-  <div>
+  <div style="height:  calc(100vh - 128px)">
     <VAceEditor ref="myAceEditorRef" v-model:value="editerTxt" v-contextmenu:contextmenu useWorker="true"
-      :lang="language" :theme="theme" :options="editorOptions" style="width: 100%; height: 500px" />
-    <div id="statusBar" style="width: 100%; height: 100px" />
+      :lang="language" :theme="theme" :options="editorOptions" style="width: 100%; height: 100%" />
+
   </div>
 
   <div>
@@ -528,9 +541,16 @@ ded4
         <el-checkbox-group v-model="filterCheckList" @change="searchOptionChange">
           <el-checkbox label="匹配大小写" value="case" />
           <el-checkbox label="正则" value="reg" />
-          <el-checkbox label="选中行" value="selectd" />
           <el-checkbox disabled label="新编辑器" value="newEditor" />
+
         </el-checkbox-group>
+        <div>
+          <el-text>结果 ：</el-text>
+          <el-radio-group>
+            <el-radio value="copy">复制到剪贴板</el-radio>
+            <el-radio label="cut">剪切到剪贴板</el-radio>
+          </el-radio-group>
+        </div>
       </div>
       <div />
       <template #footer>
@@ -544,9 +564,9 @@ ded4
     </el-dialog>
 
     <v-contextmenu ref="contextmenu">
-      <v-contextmenu-submenu v-for="(item, i) in menuData"  :title="item.name" >
+      <v-contextmenu-submenu v-for="(item, i) in menuData" :title="item.name">
         <div v-for="(item1, index1) in item.sub">
-          <v-contextmenu-item   v-if="item1.name != 'divider'">
+          <v-contextmenu-item v-if="item1.name != 'divider'" @click="item1.event">
             {{ item1.name }}
           </v-contextmenu-item>
           <v-contextmenu-divider v-if="item1.name == 'divider'" />
@@ -554,7 +574,7 @@ ded4
       </v-contextmenu-submenu>
     </v-contextmenu>
 
-   
+
   </div>
 </template>
 
