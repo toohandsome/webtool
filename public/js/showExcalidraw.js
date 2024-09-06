@@ -1,4 +1,5 @@
-// ExcalidrawLib.defaultLang= { code: "zh-CN", label: "简体中文" };
+// https://docs.excalidraw.com/docs
+
 const elements = ExcalidrawLib.convertToExcalidrawElements([
   {
     type: "diamond",
