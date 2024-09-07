@@ -459,6 +459,13 @@ a,s,d,f
         filterMode.value = "not include";
       }
 
+      if (dialogValue1.value=="") {
+        ElMessage({
+          type: "error",
+          message: `请输入内容`
+        });
+        return;
+      }
       let reg = new RegExp(dialogValue1.value);
 
       var allText = "";
