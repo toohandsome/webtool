@@ -1,15 +1,25 @@
 <template>
-  <section class="monaco-editor-container" >
-    <MonacoEditor
-      :init-value="sourceValue"  
-    />
-  </section>
+  <div id="monacaEditor" style="height: 500px;"> 
+    </div>
 </template>
 
-<script setup lang="ts">
- import { ref, defineComponent } from "vue";
-
-const sourceValue = ref('123') ;
- 
+<script setup>
+useHead({
+  script: [
+    { src: "/js/monaca-loader.js" },
+    // { src: "/js/monaco-workerMain.js" }, 
+    { src: "/js/showMonaco.js", body: true },
+  ],
+});
 </script>
- 
+<style>
+  @import url("~/public/css/monaco.css");
+ html, body {
+        height: 100%;
+        margin: 0px;
+    }
+#monacaEditor {
+  height: 100%;
+  width: 100%;
+} 
+</style> 

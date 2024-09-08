@@ -1,8 +1,8 @@
-<template>
+ <template>
   <div id="container"></div>
 
 </template>
-
+<!--
 <script setup>
 useHead({
   script: [
@@ -16,4 +16,4 @@ useHead({
 <style> 
   @import url("~/public/css/logicflow.css");
   
-</style>
+</style> -->

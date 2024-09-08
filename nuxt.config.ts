@@ -15,9 +15,5 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
     }
-  },
-  css: [
-    'element-plus/dist/index.css',
-    'element-plus/theme-chalk/display.css',
-  ] 
+  }
 })

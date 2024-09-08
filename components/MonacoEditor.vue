@@ -8,7 +8,7 @@ import { onMounted, onBeforeUnmount } from "vue";
 const editorOptions = {
   value: '', // 编辑器初始显示文字
   autoIndex: true, // 控制是否开启自动索引。当开启时，编辑器会自动创建索引以加速搜索和语义高亮。
-  fontSize: 12, // 字体大小
+  fontSize: 14, // 字体大小
   language: 'javascript', //语言
   readOnly: false, // 是否只读  
   overviewRulerBorder: false, // 滚动是否有边框
@@ -20,10 +20,10 @@ const editorOptions = {
     // 关闭代码缩略图
     enabled: false, // 是否启用预览图
   },
-  scrollbar: {
-    verticalScrollbarSize: 5, // 垂直滚动条宽度，默认px
-    horizontalScrollbarSize: 2, // 水平滚动条高度
-  },
+  // scrollbar: {
+  //   verticalScrollbarSize: 5, // 垂直滚动条宽度，默认px
+  //   horizontalScrollbarSize: 2, // 水平滚动条高度
+  // },
   wordWrap: 'on', // 开启自动换行
   roundedSelection: true, // 右侧不显示编辑器预览框
   originalEditable: true, // 是否允许修改原始文本
@@ -62,7 +62,9 @@ const props = defineProps({
 let editor: any;
 let originalModel: any; 
 let editorWorker: any;
+let tsWorker: any;
 let monaco: any;  
+let setLocaleData: any;  
 
 const init = () => {
   editor = monaco.editor.create(document.getElementById('monacoEditor'), {
@@ -71,26 +73,34 @@ const init = () => {
   });
 
  
-  originalModel = monaco.editor.createModel(props.initValue, 'javascript');
+  // originalModel = monaco.editor.createModel(props.initValue, 'javascript');
  
-  editor.setModel( 
-     originalModel
-   ); 
+  // editor.setModel( 
+  //    originalModel
+  //  ); 
 
  
 };
 
+
 const asyncFn = async () => {
   monaco = await import('monaco-editor');
   editorWorker = await import('monaco-editor/esm/vs/editor/editor.worker?worker');
+  tsWorker = await import('monaco-editor/esm/vs/language/typescript/ts.worker?worker'); 
+  //  setLocaleData =   import('monaco-editor-nls');
+  // const zh =   import('monaco-editor-nls/locale/zh-hans');
+  // setLocaleData(zh);
 
   //解决 Monaco Editor 无法正确加载其所需的 Web Worker
   self.MonacoEnvironment = {
-    getWorker(workerId, label) {
+    getWorker(_, label) {
+      if (label==="typescript" ||label==="javascript" ) {
+        return new tsWorker();
+      }
       return new editorWorker();
-    },
-  };
-
+    }
+  }; 
+  monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
   //初始化编辑器
   init();
 };
